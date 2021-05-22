@@ -9,6 +9,7 @@ import common.PersonInfo;
 import common.Candidate;
 
 import common.ServerI;
+import common.Vote;
 import common.RemoteObject;
 
 import java.io.File;
@@ -332,7 +333,7 @@ public class Server extends UnicastRemoteObject implements ServerI{
             FileOutputStream f = new FileOutputStream("rmi/serverData");
             ObjectOutputStream o = new ObjectOutputStream(f)
         ){
-            o.writeObject(this.data);
+            o.writeObject(data);
         } catch (FileNotFoundException e) {
             System.out.println("File not found");
         } catch (IOException e) {
@@ -343,8 +344,8 @@ public class Server extends UnicastRemoteObject implements ServerI{
     }
     
     private void loadDataFromTextFile(){
-        String facultyPath = "faculties";
-        String usersPath = "users";
+        String facultyPath = "rmi/faculties";
+        String usersPath = "rmi/users";
         
         loadFacultiesFromTextFile(facultyPath);
         loadUsersFromTextFile(usersPath);
@@ -586,6 +587,15 @@ public class Server extends UnicastRemoteObject implements ServerI{
         return false;
     }
 
+    public boolean login(int id, String username, String password) throws RemoteException{
+        Person person = queryPersonById(id);
+
+        if(person == null)
+            return false;
+
+        return person.getInfo().getUsername().equals(username) && person.login(password);
+    }
+
     /**
      * Query Person by id
      * @param id
@@ -616,6 +626,17 @@ public class Server extends UnicastRemoteObject implements ServerI{
         Person person = new Person(name, phone, address, id, expire, password, username, faculty, department, type);
         data.addUser(person);
         semaphore.release();
+    }
+
+    public void newPerson(String name, int phone, String address, int id, Date expire, String password, String username, String faculty, String department, String type) throws RemoteException{
+        for(Faculty f: data.getFaculties()){
+            if(f.getName().equals(faculty)){
+                Person person = new Person(name, phone, address, id, expire, password, username, f, department, type);
+                data.addUser(person);
+                semaphore.release();
+                return;
+            }
+        }
     }
     /**
      * Creates a new election
@@ -653,6 +674,54 @@ public class Server extends UnicastRemoteObject implements ServerI{
 
         for(Election election: data.getElections()){
             elections.add(election.getInfo());
+        }
+
+        return elections;
+    }
+
+    public List<ElectionInfo> getOnGoingElections() throws RemoteException{
+        List<ElectionInfo>elections = new ArrayList<>();
+
+        for(Election election: onGoing){
+            elections.add(election.getInfo());
+        }
+        
+        return elections;
+    }
+
+    public List<ElectionInfo> getEditableElections() throws RemoteException{
+        List<ElectionInfo>elections = new ArrayList<>();
+
+        Date now = new Date();
+
+        for(Election election: data.getElections()){
+            if(election.getStart().before(now)){
+                elections.add(election.getInfo());
+            }
+        }
+
+        return elections;
+    }
+
+    public List<ElectionInfo> getOnGoingElections(int id, String type) throws RemoteException{
+        Person person = queryPersonById(id);
+
+        if(person == null){
+            return Collections.emptyList();
+        }
+
+        List<ElectionInfo>elections = new ArrayList<>();
+
+        for(Election election: onGoing){
+            if(election.getType().equals(type)){
+                elections.add(election.getInfo());
+            }
+        }
+
+        for(Vote vote: person.getElections()){
+            if(elections.contains(vote.getElection().getInfo())){
+                elections.remove(vote.getElection().getInfo());
+            }
         }
 
         return elections;

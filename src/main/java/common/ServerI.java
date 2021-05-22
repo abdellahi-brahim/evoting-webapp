@@ -13,12 +13,17 @@ public interface ServerI extends Remote {
     public boolean hasStation(String faculty, String department) throws RemoteException ;
     public boolean reconnectStation(String faculty, String department, String id) throws RemoteException;
     public boolean login(String username, String password) throws RemoteException;
+    public boolean login(int id, String username, String password) throws RemoteException;
     public List<String> getElectionLists(String title) throws RemoteException;
     public void newPerson(String name, int phone, String address, int id, Date expire, String password, String username, Faculty faculty, String department, String type) throws RemoteException;
+    public void newPerson(String name, int phone, String address, int id, Date expire, String password, String username, String faculty, String department, String type) throws RemoteException;
     public void newElection(String title, String description, Date start, Date end, String type) throws RemoteException;
     public PersonInfo getPersonById(int id) throws RemoteException;
     public PersonInfo getPersonByUsername(String username) throws RemoteException;
     public List<ElectionInfo> getElections() throws RemoteException;
+    public List<ElectionInfo> getOnGoingElections() throws RemoteException;
+    public List<ElectionInfo> getEditableElections() throws RemoteException;
+    public List<ElectionInfo> getOnGoingElections(int id, String type) throws RemoteException;
     public void changeTitle(String title, String newTitle) throws RemoteException;
     public void changeDescription(String title, String description) throws RemoteException;
     public void addListElection(String title, String list) throws RemoteException;

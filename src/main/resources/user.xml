@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+    "http://struts.apache.org/dtds/struts-2.5.dtd">
+
+<struts>
+    <package name="user" namespace="/user" extends="struts-default">
+        <!-- Declaration of the interceptor-->
+        <interceptors>
+            <interceptor name = "authInterceptor" class="interceptors.AuthInterceptor"/>
+            <interceptor name = "ServerConnectionInterceptor" class="interceptors.ServerConnectionInterceptor"/>
+
+            <interceptor-stack name = "loggedStack">
+                <interceptor-ref name="ServerConnectionInterceptor"/>
+                <interceptor-ref name="authInterceptor"/>
+                <interceptor-ref name="defaultStack"/>
+            </interceptor-stack>
+        </interceptors>
+
+        <default-interceptor-ref name="loggedStack"/>
+
+        <!-- Default action config -->
+        <default-action-ref name="index"/>
+
+        <!-- Declaration of actions-->
+        <action name="index">
+            <result name="failure">/pages/disconnected.jsp</result>
+
+            <result name="login" type = "chain">
+                <param name="actionName">login</param>
+                <param name="namespace">/user</param>
+            </result>
+
+            <result name="success" type = "chain">
+                <param name="actionName">login</param>
+            </result>
+        </action>
+
+        <!-- Render Login Page -->
+        <action name="login">
+            <result name="failure">/pages/disconnected.jsp</result>
+            <result name="login">/pages/user/login.jsp</result>
+            <result name="success">/pages/user/login.jsp</result>
+        </action>
+
+        <!-- List all avaliable elections -->
+        <action name="dashboard" class="actions.User" method="execute">
+            <result name="failure">/pages/disconnected.jsp</result>
+            
+            <result name="login" type = "chain">
+                <param name="actionName">login</param>
+                <param name="namespace">/user</param>
+            </result>
+            
+            <result name="success">/pages/user/dashboard.jsp</result>
+        </action>
+
+        <!-- List selected election lists -->
+        <action name="election" class="actions.User" method="lists">
+            <result name="failure">/pages/disconnected.jsp</result>
+            
+            <result name="login" type = "chain">
+                <param name="actionName">login</param>
+                <param name="namespace">/user</param>
+            </result>
+            
+            <result name="success">/pages/user/election.jsp</result>
+        </action>
+
+        <!-- Confirmation page -->
+        <action name="confirmation" class="actions.User" method="vote">
+            <result name="failure">/pages/disconnected.jsp</result>
+            
+            <result name="login" type = "chain">
+                <param name="actionName">login</param>
+                <param name="namespace">/user</param>
+            </result>
+            
+            <result name="success">
+                <param name="actionName">dashboard</param>
+                <param name="namespace">/user</param>
+            </result>
+        </action>
+
+        <!-- Login page validation -->
+        <action name="submit" class="actions.Login" method="userLogin">
+            <result name="failure">/pages/disconnected.jsp</result>
+
+            <result name="login" type = "chain">
+                <param name="actionName">login</param>
+                <param name="namespace">/user</param>
+            </result>
+
+            <result name="input">/pages/user/login.jsp</result>
+
+            <result name="success" type = "chain">
+                <param name="actionName">dashboard</param>
+                <param name="namespace">/user</param>
+            </result>
+        </action>
+
+        <!-- Election selection form validation action -->
+        <action name="electionValidation" class="actions.User" method="electionSelected">
+            <result name="failure">/pages/disconnected.jsp</result>
+            
+            <result name="login" type = "chain">
+                <param name="actionName">login</param>
+                <param name="namespace">/user</param>
+            </result>
+
+            <result name="success">
+                <param name="actionName">election</param>
+                <param name="namespace">/user</param>
+            </result>
+        </action>
+
+        <!-- List selection form validation action -->
+        <action name="listValidation" class="actions.User" method="listSelected">
+            <result name="failure">/pages/disconnected.jsp</result>
+            
+            <result name="login" type = "chain">
+                <param name="actionName">login</param>
+                <param name="namespace">/user</param>
+            </result>
+
+            <result name="success">
+                <param name="actionName">confirmation</param>
+                <param name="namespace">/user</param>
+            </result>
+        </action>
+
+    </package>
+</struts>

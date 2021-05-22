@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+    "http://struts.apache.org/dtds/struts-2.5.dtd">
+
+<struts>
+    <package name="admin" namespace="/admin" extends="struts-default">
+        <!-- Declaration of the interceptor-->
+        <interceptors>
+            <interceptor name = "ServerConnectionInterceptor" class="interceptors.ServerConnectionInterceptor"/>
+
+            <interceptor-stack name = "connectedStack">
+                <interceptor-ref name="ServerConnectionInterceptor"/>
+                <interceptor-ref name="defaultStack"/>
+            </interceptor-stack>
+        </interceptors>
+
+        <default-interceptor-ref name="connectedStack"/>
+        <!-- Declaration of actions-->
+        <default-action-ref name="index"/>
+
+        <!-- Error handling -->
+        <global-results>
+            <result name="error">/pages/error.jsp</result>
+        </global-results>
+
+        <global-exception-mappings>
+            <exception-mapping exception="java.lang.Exception" result="error"/>
+        </global-exception-mappings>
+
+        <!-- Declaration of actions-->
+        <action name="index">
+            <result name="failure">/pages/disconnected.jsp</result>
+
+            <result name="login" type = "chain">
+                <param name="actionName">login</param>
+                <param name="namespace">/admin</param>
+            </result>
+
+            <result name="success" type = "chain">
+                <param name="actionName">login</param>
+            </result>
+        </action>
+
+        <!-- Render Login Page -->
+        <action name="login">
+            <result name="failure">/pages/disconnected.jsp</result>
+            <result name="login">/pages/admin/login.jsp</result>
+            <result name="success">/pages/admin/login.jsp</result>
+        </action>
+
+        
+        <action name="logout">
+            <result name="failure">/pages/disconnected.jsp</result>
+            <result name="login">/pages/admin/login.jsp</result>
+            <result name="success">/pages/admin/login.jsp</result>
+        </action>
+        <!-- List all avaliable elections -->
+        <action name="dashboard">
+            <result name="failure">/pages/disconnected.jsp</result>
+            
+            <result name="login" type = "chain">
+                <param name="actionName">login</param>
+                <param name="namespace">/admin</param>
+            </result>
+            
+            <result>/pages/admin/dashboard.jsp</result>
+        </action>
+
+        <!-- Login page validation -->
+        <action name="submit" class="actions.Login" method="adminLogin">
+            <result name="failure">/pages/disconnected.jsp</result>
+            
+            <result name="login" type = "chain">
+                <param name="actionName">login</param>
+                <param name="namespace">/admin</param>
+            </result>
+
+            <result name="input">/pages/admin/login.jsp</result>
+
+            <result name="success" type = "chain">
+                <param name="actionName">dashboard</param>
+                <param name="namespace">/admin</param>
+            </result>
+        </action>
+        <!-- Process User Creation Form and save it to rmi server -->
+        <action name="registerUser" class="actions.Admin" method="createUser">
+            <result name="failure">/pages/disconnected.jsp</result>
+            
+            <result name="login" type = "chain">
+                <param name="actionName">login</param>
+                <param name="namespace">/admin</param>
+            </result>
+
+            <result name="input" type = "chain">
+                <param name="actionName">registerUser</param>
+                <param name="namespace">/admin</param>
+            </result>
+
+            <result name="success" type = "chain">
+                <param name="actionName">dashboard</param>
+                <param name="namespace">/admin</param>
+            </result>
+        </action>
+
+        <!-- Process Election Creation Form and save it in rmi server-->
+        <action name="registerElection" class="actions.Admin" method="createElection">
+            <result name="failure">/pages/disconnected.jsp</result>
+            
+            <result name="login" type = "chain">
+                <param name="actionName">login</param>
+                <param name="namespace">/admin</param>
+            </result>
+
+            <result name="input" type = "chain">
+                <param name="actionName">registerElection</param>
+                <param name="namespace">/admin</param>
+            </result>
+
+            <result name="success" type = "chain">
+                <param name="actionName">dashboard</param>
+                <param name="namespace">/admin</param>
+            </result>
+        </action>
+
+        <!-- Process Election Creation Form and save it in rmi server-->
+        <action name="registerList" class="actions.Admin" method="createList">
+            <result name="failure">/pages/disconnected.jsp</result>
+            
+            <result name="login" type = "chain">
+                <param name="actionName">login</param>
+                <param name="namespace">/admin</param>
+            </result>
+
+            <result name="input" type = "chain">
+                <param name="actionName">registerList</param>
+                <param name="namespace">/admin</param>
+            </result>
+
+            <result name="success" type = "chain">
+                <param name="actionName">dashboard</param>
+                <param name="namespace">/admin</param>
+            </result>
+        </action>
+
+        <!-- Redirects-->
+        <action name="createUser" class="actions.Admin" method="execute">
+            <result name="failure">/pages/disconnected.jsp</result>
+            
+            <result name="login" type = "chain">
+                <param name="actionName">login</param>
+                <param name="namespace">/admin</param>
+            </result>
+
+            <result name="success">
+                /pages/admin/person.jsp
+            </result>
+        </action>
+
+        <action name="createElection" class="actions.Admin" method="execute">
+            <result name="failure">/pages/disconnected.jsp</result>
+            
+            <result name="login" type = "chain">
+                <param name="actionName">login</param>
+                <param name="namespace">/admin</param>
+            </result>
+
+            <result>/pages/admin/election.jsp</result>
+        </action>
+
+        <action name="createList" class="actions.Admin" method="execute">
+            <result name="failure">/pages/disconnected.jsp</result>
+            
+            <result name="login" type = "chain">
+                <param name="actionName">login</param>
+                <param name="namespace">/admin</param>
+            </result>
+
+            <result>/pages/admin/list.jsp</result>
+        </action>
+
+        <action name="onGoingElections" class="actions.Admin" method="execute">
+            <result name="failure">/pages/disconnected.jsp</result>
+            
+            <result name="login" type = "chain">
+                <param name="actionName">login</param>
+                <param name="namespace">/admin</param>
+            </result>
+
+            <result>/pages/admin/onGoingElections.jsp</result>
+        </action>
+
+        <action name="archivedElections" class="actions.Admin" method="execute">
+            <result name="failure">/pages/disconnected.jsp</result>
+            
+            <result name="login" type = "chain">
+                <param name="actionName">login</param>
+                <param name="namespace">/admin</param>
+            </result>
+
+            <result>/pages/admin/archived.jsp</result>
+        </action>
+
+        <action name="manageElection" class="actions.Admin" method="execute">
+            <result name="failure">/pages/disconnected.jsp</result>
+            
+            <result name="login" type = "chain">
+                <param name="actionName">login</param>
+                <param name="namespace">/admin</param>
+            </result>
+
+            <result>/pages/admin/manage.jsp</result>
+        </action>
+    </package>
+</struts>

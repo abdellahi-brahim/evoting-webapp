@@ -8,9 +8,13 @@
     </head>
     <body>
         <h1>Welcome To Evoting!</h1>
-        <body>
-            <p><a href="<s:url action='loginInput'/>">Login</a></p>
-            <p><a href="<s:url action='registerInput'/>">Create Account</a></p>
-        </body> 
+
+        <s:form action="user">
+            <s:submit value="User Login"/>
+        </s:form>
+
+        <s:form action="admin">
+            <s:submit value="Admin Panel"/>
+        </s:form>
     </body>
-</html>
+</html> 

@@ -13,6 +13,7 @@ public class PersonInfo implements Serializable{
     private Faculty faculty;
     private String department;
     private String type;
+    private boolean administrator;
 
     public PersonInfo(String name, int phone, String address, CC id, String username, Faculty faculty, String department, String type){
         this.name = name;
@@ -23,6 +24,16 @@ public class PersonInfo implements Serializable{
         this.faculty = faculty;
         this.department = department;
         this.type = type;
+        
+        administrator = false;
+    }
+
+    public void setAdministrator(){
+        administrator = true;
+    }
+
+    public boolean isAdministrator(){
+        return administrator;
     }
 
     public String getType(){

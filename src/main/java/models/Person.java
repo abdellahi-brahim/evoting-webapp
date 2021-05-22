@@ -3,7 +3,7 @@ package models;
 import java.io.Serializable;
 import java.util.Date;
 
-public class PersonModel implements Serializable{
+public class Person implements Serializable{
     private String firstName;
     private String lastName;
     private int phoneNumber;

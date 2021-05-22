@@ -10,22 +10,16 @@ public class Person implements Serializable{
     private List<Vote>votes;
     private PersonInfo info;
     private String password;
-    private boolean administrator;
 
     public Person(String name, int phone, String address, int id, Date expire, String password, String username, Faculty faculty, String department, String type){
         votes = new CopyOnWriteArrayList<>();
         info = new PersonInfo(name, phone, address, new CC(id, expire), username, faculty, department, type);
 
         this.password = password;
-        administrator = false;
-    }
-
-    public void setAdministrator(){
-        administrator = true;
     }
 
     public boolean isAdministrator(){
-        return administrator;
+        return info.isAdministrator();
     }
 
     public List<Vote> getElections(){

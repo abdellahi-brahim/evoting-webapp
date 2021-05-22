@@ -9,12 +9,12 @@
     <body>
         <h1>Welcome To Evoting!</h1>
         <body>
-            <h2>Login</h2>
+            <h2>Admin Console</h2>
             <s:actionerror/>
             <s:actionmessage/>
     
-            <s:form action="login">
-                <s:token/>
+            <s:form action="submit">
+                <s:textfield name="id" label="ID Number"/>
                 <s:textfield name="username" label="Username"/>
                 <s:password name="password" label="Password"/>
                 <s:submit value = "Login"/>

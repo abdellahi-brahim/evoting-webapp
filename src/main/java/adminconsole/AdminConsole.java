@@ -1013,7 +1013,7 @@ public class AdminConsole extends UnicastRemoteObject implements RemoteObject{
     public void loadConfigFromTextFile(){
         try{
             Locale loc = new Locale("pt", "PT");
-            Path path = Paths.get("adminconsole.config");
+            Path path = Paths.get("adminconsole/adminconsole.config");
             Scanner scanner = new Scanner(path, StandardCharsets.UTF_8.name());
             scanner.useLocale(loc);
         
