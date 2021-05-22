@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+    "http://struts.apache.org/dtds/struts-2.5.dtd">
+
+<struts>
+    <constant name="struts.devMode" value="true"/>
+
+    <include file="user.xml"/>
+    <include file="admin.xml"/>
+
+    <package name="login" namespace="/" extends="struts-default">
+        <!-- Declaration of the interceptor-->
+        <interceptors>
+            <interceptor name = "ServerConnectionInterceptor" class="interceptors.ServerConnectionInterceptor"/>
+
+            <interceptor-stack name = "connectedStack">
+                <interceptor-ref name="ServerConnectionInterceptor"/>
+                <interceptor-ref name="defaultStack"/>
+            </interceptor-stack>
+        </interceptors>
+
+        <default-interceptor-ref name="connectedStack"/>
+        <!-- Declaration of actions-->
+        <default-action-ref name="index"/>
+
+        <!-- Error handling -->
+        <global-results>
+            <result name="error"> webapp/pages/error.jsp</result>
+        </global-results>
+
+        <global-exception-mappings>
+            <exception-mapping exception="java.lang.Exception" result="error"/>
+        </global-exception-mappings>
+
+        <!-- Actions Declaration -->
+        <action name="index" class="actions.Init" method="execute">
+            <result name="failure">/pages/disconnected.jsp</result>
+            <result name="success">/pages/index.jsp</result>
+        </action>
+
+        <!-- Redirects -->
+        <action name="user">
+            <result name="failure">/pages/disconnected.jsp</result>
+
+            <result name="success" type = "redirectAction">
+                <param name="actionName">index</param>
+                <param name="namespace">/user</param>
+            </result>
+        </action>
+
+        <!-- Redirects -->
+        <action name="admin">
+            <result name="failure">/pages/disconnected.jsp</result>
+
+            <result name="success" type = "redirectAction">
+                <param name="actionName">index</param>
+                <param name="namespace">/admin</param>
+            </result>
+        </action>
+    </package>
+</struts>
