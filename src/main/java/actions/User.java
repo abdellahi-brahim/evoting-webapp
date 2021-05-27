@@ -65,6 +65,19 @@ public class User extends ActionSupport implements SessionAware{
         return LOGIN;
     }
 
+    public String vote(){
+        ServerI server = (ServerI)session.get("Connection");
+        PersonInfo profile = (PersonInfo)session.get("Profile");
+
+        try{
+            server.vote(profile.getId().getNumber(), "webStation", selectedElection, selectedList);
+            return SUCCESS;
+        }
+        catch(RemoteException e){
+            return FAILURE;
+        }
+    }
+
     public List<String>getLists(){
         return lists;
     }

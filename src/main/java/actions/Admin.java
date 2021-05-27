@@ -26,6 +26,7 @@ public class Admin extends ActionSupport implements SessionAware{
     
     private transient Person person;
     private transient Election election;
+    private transient ElectionInfo selectedElection;
     private transient Lista list;
 
     /*Displayed data*/
@@ -51,7 +52,6 @@ public class Admin extends ActionSupport implements SessionAware{
         people = new ArrayList<>();
         onGoing = new ArrayList<>();
         editElections = new ArrayList<>();
-        people = new ArrayList<>();
     }
 
     private void staticInit(){
@@ -59,9 +59,6 @@ public class Admin extends ActionSupport implements SessionAware{
         faculties.add("Faculdade de Direito");
         departments.add("Departamento de Informática");
         departments.add("Departamento de Matemática");
-        userTypes.add("Student");
-        userTypes.add("Teacher");
-        userTypes.add("Employee");
     }
 
     public String createUser(){
@@ -128,8 +125,31 @@ public class Admin extends ActionSupport implements SessionAware{
         }
     }
 
+    public String getSelectedElection(){
+        if(election==null || election.getTitle() == null)
+            return INPUT;
+        
+        ServerI server = (ServerI)session.get("Connection");
+
+        try{
+            ArrayList<ElectionInfo> els = new ArrayList<>(server.getElections());
+            for(ElectionInfo el: els){
+                if(el.getTitle().equals(election.getTitle())){
+                    selectedElection = el;
+                    return SUCCESS;
+                }
+            }
+            return "failure";
+        }
+        catch(RemoteException e){
+            return "failure";
+        }
+    }
+
     public String createElection(){
         boolean invalid = false;
+
+        System.out.println(election+"\n\n\n\n\n");
 
         if(election.getTitle().length() == 0){
             addFieldError("election.faculty", "Title is required.");
@@ -141,44 +161,24 @@ public class Admin extends ActionSupport implements SessionAware{
             invalid = true;
         }
 
-        if(election.getStartDate().before(new Date())){
-            addFieldError("election.faculty", "Start date must be after today.");
-            invalid = true;
-        }
-
-        if(election.getEndDate().after(new Date())){
-            addFieldError("election.faculty", "End date must be before today.");
-            invalid = true;
-        }
-
-        if(person.getFaculty().equals("-1")){
+        if(election.getFaculty().equals("-1")){
             addFieldError("election.faculty", "Faculty is required.");
             invalid = true;
         }
 
-        if(person.getDepartment().equals("-1")){
+        if(election.getDepartment().equals("-1")){
             addFieldError("election.department", "Department is required.");
             invalid = true;
         }
 
-        if(person.getType() == null){
+        if(election.getType() == null){
             addFieldError("election.type", "Type is required.");
             invalid = true;
         }
 
         if(invalid){
             return INPUT;
-        }
-
-        if(election.getStartTime() != null){
-            election.getStartDate().setHours(election.getStartTime().getHours());
-            election.getStartDate().setMinutes(election.getStartTime().getMinutes());
-        }
-
-        if(election.getEndTime() != null){
-            election.getEndDate().setHours(election.getEndTime().getHours());
-            election.getEndDate().setMinutes(election.getEndTime().getMinutes());
-        }   
+        } 
 
         ServerI server = (ServerI)session.get("Connection");
         
@@ -229,8 +229,15 @@ public class Admin extends ActionSupport implements SessionAware{
         }
 
         for(Faculty faculty: rawFaculties){
-            editElections.add(faculty.getName());
+            faculties.add(faculty.getName());
+            for(String department: faculty.getDepartments()){
+                departments.add(department);
+            }
         }
+
+        userTypes.add("Student");
+        userTypes.add("Teacher");
+        userTypes.add("Employee");
 
         return SUCCESS;
     }

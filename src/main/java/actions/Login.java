@@ -28,7 +28,9 @@ public class Login extends ActionSupport implements SessionAware{
     }
 
     public String logout(){
-        return "";
+        session.remove("Profile");
+        session.remove("loggedin");
+        return SUCCESS;
     }
     
     public String userLogin(){

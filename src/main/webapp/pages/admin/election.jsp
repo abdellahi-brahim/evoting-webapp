@@ -8,13 +8,12 @@
   </head>
   <body>
     <h2>Create Election</h2>
+
     <s:form action = "registerElection">
         <s:textfield name="election.title" label="Title"/>
         <s:textarea name="election.description" label="Description"/>
-        <s:textfield name="election.startDate" label="Start Date" type="Date"/>
-        <s:textfield name="election.startTime" label="Start Time" type="time"/>
-        <s:textfield name="election.endDate" label="End Date" type="Date"/>
-        <s:textfield name="election.endDate" label="End Time" type="time"/>
+        <s:textfield name="election.startDate" label="Start Date" type="datetime-local"/>
+        <s:textfield name="election.endDate" label="End Date" type="datetime-local"/>
 
         <s:select name="election.faculty" label="Faculty"
         headerKey="-1" headerValue="Select your faculty"

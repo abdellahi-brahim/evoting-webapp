@@ -93,7 +93,21 @@
             </result>
 
             <result name="input" type = "chain">
-                <param name="actionName">registerUser</param>
+                <param name="actionName">createUser</param>
+                <param name="namespace">/admin</param>
+            </result>
+
+            <result name="success" type = "chain">
+                <param name="actionName">dashboard</param>
+                <param name="namespace">/admin</param>
+            </result>
+        </action>
+
+        <action name="selectedElection" class="actions.Admin" method="getSelectedElection">
+            <result name="failure">/pages/disconnected.jsp</result>
+            
+            <result name="login" type = "chain">
+                <param name="actionName">login</param>
                 <param name="namespace">/admin</param>
             </result>
 
@@ -113,7 +127,7 @@
             </result>
 
             <result name="input" type = "chain">
-                <param name="actionName">registerElection</param>
+                <param name="actionName">createElection</param>
                 <param name="namespace">/admin</param>
             </result>
 
@@ -165,7 +179,13 @@
                 <param name="namespace">/admin</param>
             </result>
 
-            <result>/pages/admin/election.jsp</result>
+            <result name="input">
+                /pages/admin/election.jsp
+            </result>
+
+            <result name="success">
+                /pages/admin/election.jsp
+            </result>
         </action>
 
         <action name="createList" class="actions.Admin" method="execute">

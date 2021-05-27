@@ -39,6 +39,7 @@ import java.util.Locale;
 import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Semaphore;
 import java.util.function.Predicate;
@@ -50,19 +51,32 @@ class Station implements Serializable{
     private Faculty faculty;
     private String department;
     private String id;
+
+    private List<Vote>votes;
     private transient RemoteObject remote;
 
-    public Station(Faculty faculty, String department, String id){
-        this.faculty = faculty;
-        this.department = department;
-        this.id = id;
+    public Station(){
+        this.votes = new ArrayList<>();
+        id = UUID.randomUUID().toString();
     }
 
-    public Station(Faculty faculty, String department, String id, RemoteObject remote){
+    public Station(Faculty faculty, String department){
+        this.votes = new ArrayList<>();
+
         this.faculty = faculty;
         this.department = department;
-        this.id = id;
+
+        id = UUID.randomUUID().toString();
+    }
+
+    public Station(Faculty faculty, String department, RemoteObject remote){
+        this.votes = new ArrayList<>();
+
+        this.faculty = faculty;
+        this.department = department;
         this.remote = remote;
+
+        id = UUID.randomUUID().toString();;
     }
     
     /** 
@@ -91,6 +105,14 @@ class Station implements Serializable{
      */
     public String getId(){
         return id;
+    }
+
+    public List<Vote> getVotes(){
+        return votes;
+    }
+
+    public void addVote(Vote vote){
+        this.votes.add(vote);
     }
 }
 
@@ -153,6 +175,7 @@ public class Server extends UnicastRemoteObject implements ServerI{
     private transient Timer schedule;
     private Semaphore semaphore;
     private Election nextElectionScheduled;
+    private Station webStation;
 
     private Data data;
     /**
@@ -166,6 +189,8 @@ public class Server extends UnicastRemoteObject implements ServerI{
         stations = new CopyOnWriteArrayList<>();
         onGoing = new CopyOnWriteArrayList<>();
         stations = new CopyOnWriteArrayList<>();
+
+        webStation = new Station();
 
         if(!loadFromObjectFile()){
             data = new Data();
@@ -426,8 +451,8 @@ public class Server extends UnicastRemoteObject implements ServerI{
 
     private void createElections(){
         try {
-            Date begin = new SimpleDateFormat("dd-MM-yyyy").parse("01-04-2021");
-            Date end = new SimpleDateFormat("dd-MM-yyyy HH:mm").parse("10-04-2021 12:06");
+            Date begin = new SimpleDateFormat("dd-MM-yyyy").parse("26-05-2021");
+            Date end = new SimpleDateFormat("dd-MM-yyyy HH:mm").parse("27-05-2021 19:40");
 
             Election election = new Election("A. Estudantes", "description", begin, end, "Student");
             data.addElection(election);
@@ -545,7 +570,7 @@ public class Server extends UnicastRemoteObject implements ServerI{
 
         for(Faculty fac: data.getFaculties()){
             if(fac.getName().equals(faculty)){
-                stations.add(new Station(fac, department, id, remote));
+                stations.add(new Station(fac, department, remote));
                 semaphore.release();
                 return true;
             }
@@ -844,11 +869,41 @@ public class Server extends UnicastRemoteObject implements ServerI{
             }
         }
     }
+
+    private Election queryElectionByTitle(String title){
+        for(Election election: data.getElections()){
+            if(election.getTitle().equals(title)){
+                return election;
+            }
+        }
+        return null;
+    }
+
+    private void addVoteToPerson(int id, String station, String electionTitle){
+        Date today = new Date();
+        Person person = queryPersonById(id);
+        Election election = queryElectionByTitle(electionTitle);
+        if(person != null){
+            Vote vote = new Vote(station, today, election);
+            person.addElection(vote);
+        }
+    }
     /**
      * Adds vote to election
      */
-    public void vote(String election, String list) throws RemoteException{
-        System.out.println("Not implemented");
+    public void vote(int id, String station, String electionTitle, String list) throws RemoteException{
+        addVoteToPerson(id, station, electionTitle);
+
+        Election election = queryElectionByTitle(electionTitle);
+
+        if(election != null){
+            for(Candidate candidate: election.getCandidates()){
+                if(candidate.getList().getName().equals(list)){
+                    candidate.addVote();
+                    return;
+                }
+            }
+        }
     }
     /**
      * Gets all faculties

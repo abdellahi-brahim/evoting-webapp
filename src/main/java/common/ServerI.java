@@ -32,7 +32,7 @@ public interface ServerI extends Remote {
     public void addList(String name) throws RemoteException;
     public void addMemberList(String listName, int id) throws RemoteException;
     public void removeMemberList(String listName, int id) throws RemoteException;
-    public void vote(String election, String list) throws RemoteException;
+    public void vote(int id, String station, String electionTitle, String list) throws RemoteException;
     public List<Faculty> getFaculties() throws RemoteException;
     public void newFaculty(String name) throws RemoteException;
     public void newDepartment(String faculty, String department) throws RemoteException;

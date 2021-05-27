@@ -1,5 +1,7 @@
 package models;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Election{
@@ -7,9 +9,7 @@ public class Election{
     private String description;
     private String type;
     private Date startDate;
-    private Date startTime;
     private Date endDate;
-    private Date endTime;
     private String faculty;
     private String department;
 
@@ -57,32 +57,32 @@ public class Election{
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-
-    public Date getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
+    public void setStartDate(String startDate) {
+        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm");
+        try{
+            this.startDate = formatter.parse(startDate);
+        }
+        catch(Exception e){
+            System.out.println("Error Parsing date");
+        }
     }
 
     public Date getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
+    public void setEndDate(String endDate) {
+        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm");
+        try{
+            this.endDate = formatter.parse(endDate);
+        }
+        catch(Exception e){
+            System.out.println("Error Parsing date");
+        }
     }
 
-    public Date getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(Date endTime) {
-        this.endTime = endTime;
+    public String toString(){
+        return String.format("Title: %s\nDescription: %s\nType: %s\nStart Date: %s\nEnd Date: %s\nType: %s\nFaculty: %s\nDepartment: %s", title, description, type, startDate, endDate, type, faculty, department);
     }
 
 }
