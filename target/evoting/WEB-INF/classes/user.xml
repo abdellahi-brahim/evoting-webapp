@@ -108,6 +108,11 @@
                 <param name="namespace">/user</param>
             </result>
 
+            <result name="input">
+                <param name="actionName">dashboard</param>
+                <param name="namespace">/user</param>
+            </result>
+
             <result name="success">
                 <param name="actionName">election</param>
                 <param name="namespace">/user</param>

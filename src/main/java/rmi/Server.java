@@ -452,7 +452,7 @@ public class Server extends UnicastRemoteObject implements ServerI{
     private void createElections(){
         try {
             Date begin = new SimpleDateFormat("dd-MM-yyyy").parse("26-05-2021");
-            Date end = new SimpleDateFormat("dd-MM-yyyy HH:mm").parse("27-05-2021 19:40");
+            Date end = new SimpleDateFormat("dd-MM-yyyy HH:mm").parse("27-05-2021 20:10");
 
             Election election = new Election("A. Estudantes", "description", begin, end, "Student");
             data.addElection(election);

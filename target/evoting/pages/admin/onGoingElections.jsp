@@ -10,7 +10,7 @@
     <h2>On Going Elections</h2>
 
     <s:if test="onGoing.size > 0">
-        <s:form action = "dashboard">
+        <s:form action = "showElection">
             <s:select name="election.title" label="On Going Elections"
             headerKey="-1" headerValue="Select one election"
             list="onGoing"/>
